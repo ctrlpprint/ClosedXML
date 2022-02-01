@@ -325,6 +325,7 @@ namespace ClosedXML.Excel.CalcEngine
                 Statistical.Register(this);
                 DateAndTime.Register(this);
                 Financial.Register(this);
+                PowerQuery.Register(this);
             }
             return _fnTbl;
         }
