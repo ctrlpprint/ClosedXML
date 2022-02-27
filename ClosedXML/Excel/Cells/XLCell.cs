@@ -479,8 +479,13 @@ namespace ClosedXML.Excel
             {
                 if (HasFormula)
                 {
-                    CachedValue = RecalculateFormula(FormulaA1);
-                    UpdateCachedValueFromDataType();
+                    try {
+                        CachedValue = RecalculateFormula(FormulaA1);
+                        UpdateCachedValueFromDataType();
+                    }
+                    catch(ApplicationException ex) {
+                        throw new ApplicationException($"Error on {this.Address.Worksheet.Name} at {Address}. {ex.Message}.", ex);
+                    }
                 }
                 else
                     CachedValue = null;

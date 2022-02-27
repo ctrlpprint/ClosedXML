@@ -43,8 +43,13 @@ namespace ClosedXML.Excel.CalcEngine
                     }
 
                     // store this expression
-                    x = _ce.Parse(expression);
-                    _dct[expression] = new WeakReference(x);
+                    try {
+                        x = _ce.Parse(expression);
+                        _dct[expression] = new WeakReference(x);
+                    }
+                    catch(ExpressionParseException ex) {
+                        throw new ApplicationException($"Could not parse the expression: [{expression}].", ex);
+                    }
                 }
                 return x;
             }

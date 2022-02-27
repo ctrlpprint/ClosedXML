@@ -703,7 +703,7 @@ namespace ClosedXML.Excel.CalcEngine
             // identifiers (functions, objects) must start with alpha or underscore
             if (!isEnclosed && !isLetter && c != '_' && (_idChars == null || !_idChars.Contains(c)))
             {
-                Throw("Identifier expected.");
+                Throw($"Identifier expected. Found {c}");
             }
 
             // and must contain only letters/digits/_idChars
