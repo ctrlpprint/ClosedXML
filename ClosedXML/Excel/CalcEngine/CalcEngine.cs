@@ -703,7 +703,7 @@ namespace ClosedXML.Excel.CalcEngine
             // identifiers (functions, objects) must start with alpha or underscore
             if (!isEnclosed && !isLetter && c != '_' && (_idChars == null || !_idChars.Contains(c)))
             {
-                Throw($"Identifier expected. Found {c}");
+                Throw($"Identifier should start with letter or underscore. Found {c} in {_expr}");
             }
 
             // and must contain only letters/digits/_idChars
@@ -724,11 +724,21 @@ namespace ClosedXML.Excel.CalcEngine
                     isDigit = char.IsDigit(c);
                 }
 
-                var disallowedSymbols = new List<char>() { '\\', '/', '*', '[', ':', '?' };
+                // The following appear to be based on historic rules for Excel names.
+
+                // Seems to be based on rules for worksheet names
+                // https://www.accountingweb.com/technology/excel/seven-characters-you-cant-use-in-worksheet-names
+                // var disallowedSymbols = new List<char>() { '\\', '/', '*', '[', ':', '?' };
+
+                var disallowedSymbols = new List<char>() { '\\', '/', '*', '[', ':'};
                 if (isEnclosed && disallowedSymbols.Contains(c))
                     break;
 
-                var allowedSymbols = new List<char>() { '_', '.' };
+                // Per https://bettersolutions.com/excel/named-ranges/index.htm
+                // "You cannot use any symbols except for an underscore and a full stop."
+                // var allowedSymbols = new List<char>() { '_', '.' };
+
+                var allowedSymbols = new List<char>() { '_', '.', '?' };
 
                 if (!isLetter && !isDigit
                     && !(isEnclosed || allowedSymbols.Contains(c))
@@ -833,7 +843,7 @@ namespace ClosedXML.Excel.CalcEngine
             GetToken();
             if (_currentToken.Type != TKTYPE.IDENTIFIER)
             {
-                Throw("Identifier expected");
+                Throw($"Identifier expected. Found {_currentToken.Value}");
             }
             return _currentToken;
         }

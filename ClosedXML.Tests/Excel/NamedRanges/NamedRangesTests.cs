@@ -167,6 +167,31 @@ namespace ClosedXML.Tests.Excel
         }
 
         [Test]
+        public void CanSaveAndLoadNamedRangesWithQuestionMarks() {
+            using (var ms = new MemoryStream()) {
+                using (var wb = new XLWorkbook()) {
+
+                    var ws1 = wb.AddWorksheet("Sheet1");
+                    ws1.Cell(1,1).Value = 1;
+                    wb.NamedRanges.Add("TE?ST", ws1.Cell(1,1).AsRange());
+
+                    ws1.Cell(2, 1).FormulaA1 = "=(TE?ST)";
+
+                    Assert.AreEqual(1, (double)ws1.Cell(2, 1).Value, XLHelper.Epsilon);
+
+                    wb.SaveAs(ms);
+                }
+
+                using (var wb = new XLWorkbook(ms)) {
+                    var ws1 = wb.Worksheet("Sheet1");
+
+                    Assert.AreEqual(1, (double)ws1.Cell(2, 1).Value, XLHelper.Epsilon);
+
+                }
+            }
+        }
+
+        [Test]
         public void CopyNamedRangeDifferentWorksheets()
         {
             var wb = new XLWorkbook();
